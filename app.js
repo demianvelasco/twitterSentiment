@@ -3,8 +3,7 @@
 // Author: Alejandro Demian Velasco
 //
 // Node application using Twitter API to gather Twitter feeds from different locations.
-// - Execute sentiment analysis to every post and track the overall state per day,
-//	 per week, and per month.
+// - Execute sentiment analysis to every post and track the overall mood
 //
 // - Find potential friendships and determine the group of friends based on mutual
 //   followers.
@@ -45,10 +44,10 @@ var T = new Twit({
 
 
 // Location coordinates
-var IBMPoughkeepsie = [ '-122.75', '36.8', '-121.75', '37.8' ]
+var SanFran = [ '-122.75', '36.8', '-121.75', '37.8' ]
 
 
-var stream = T.stream('statuses/filter', { locations: IBMPoughkeepsie })
+var stream = T.stream('statuses/filter', { locations: SanFran })
 
 // When a new Tweet is posted, pull it.
 stream.on('tweet', function (tweet) {
