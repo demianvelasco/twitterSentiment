@@ -87,9 +87,13 @@ stream.on('tweet', function (tweet) {
 			friendScreenName = followerList[keys];
 		  T.get('followers/user_id', { screen_name: friendScreenName },  function (err, friendFollowersList, response) {
 		  // If nothing has gone wrong, return data requested
+			// set key to user's screen name
 			keyForFriendGroup = screenName + '_friends';
+			// Empty list for common friends
 			var commonFriendList {};
+			// index starting at zero to traverse through friend's object
 			var friendsIndex = 0;
+			// look for user's screen name in friend's followers
 			for (var key in friendFollowersList) {
 				if (friendFollowersList[key] = screenName ) {
 					// Found user's screenName in followers friends list.
@@ -99,6 +103,7 @@ stream.on('tweet', function (tweet) {
 				}
 			}
 			groupOfFriends[screenName] = commonFriendList;
+		  })
 		}
 	})
 console.log(groupOfFriends);
