@@ -95,10 +95,11 @@ stream.on('tweet', function (tweet) {
 			var friendsIndex = 0;
 			// look for user's screen name in friend's followers
 			for (var key in friendFollowersList) {
-				if (friendFollowersList[key] = screenName ) {
+				var secondDegreeFollower = friendFollowersList;
+				if (secondDegreeFollower == screenName ) {
 					// Found user's screenName in followers friends list.
 					// Friends in commong
-					commonFriendList[friendsIndex] = friendFollowersList[key];
+					commonFriendList[friendsIndex] = secondDegreeFollower;
 					friendsIndex += 1;
 				}
 			}
