@@ -2,20 +2,20 @@
 //
 // Author: Alejandro Demian Velasco
 //
-// Node application using Twitter API to gather Twitter feeds from different locations. 
-// - Execute sentiment analysis to every post and track the overall state per day, 
+// Node application using Twitter API to gather Twitter feeds from different locations.
+// - Execute sentiment analysis to every post and track the overall state per day,
 //	 per week, and per month.
-//   
-// - Find potential friendships and determine the group of friends based on mutual 
+//
+// - Find potential friendships and determine the group of friends based on mutual
 //   followers.
-// 
+//
 //	Node Modules:
 //         Sentiment
 //         Twit
 //
 // The Tweets and the user's information is NOT stored. It is to simply analyze the data
-// generated. 
-//   
+// generated.
+//
 //************************************************************************************
 
 // Sentiment node module
@@ -25,16 +25,14 @@ var Twit = require('twit')
 
 // Global variables
 var errorAlert = "A unicorn went missing!"
-
+var groupOfFriends = {};
 var overallSentiment = null;
 
 var locationData = {
 	 followers_watermark: 0,
 	 previous_most_followed_user: null
-	
+
 };
-
-
 
 
 // Twitter User Credentials:
@@ -44,6 +42,7 @@ var T = new Twit({
 	, access_token:         'xxx..'
 	, access_token_secret:  'xxx..'
 })
+
 
 // Location coordinates
 var IBMPoughkeepsie = [ '-122.75', '36.8', '-121.75', '37.8' ]
@@ -70,10 +69,10 @@ stream.on('tweet', function (tweet) {
 
 	var currentMostFollowers = locationData["followers_watermark"];
 	// Who has the most followers?
-	if (followersCount > currentMostFollowers) 
+	if (followersCount > currentMostFollowers)
 	{
 		previousMostFollowed = locationData["most_followed_user"];
-		locationData["previous_most_followed_user"] = previousMostFollowed 
+		locationData["previous_most_followed_user"] = previousMostFollowed
 		locationData["most_followed_user"] = screenName;
 		locationData["followers_watermark"] = followersCount;
 	}
@@ -81,12 +80,31 @@ stream.on('tweet', function (tweet) {
 	locationData["current_mood"] = currentMood(sentimentResult);
 	console.log(locationData);
 
-	T.get('followers/ids', { screen_name: screenName },  function (err, followersList, response) {
+	T.get('followers/user_id', { screen_name: screenName },  function (err, followersList, response) {
 		// If nothing has gone wrong, return data requested
-		console.log(followersList.ids);
+		// console.log(followersList);
+		// followerList holds screen names of followers for the current user
+		for (var key in followerList) {
+			friendScreenName = followerList[keys];
+		  T.get('followers/user_id', { screen_name: friendScreenName },  function (err, friendFollowersList, response) {
+		  // If nothing has gone wrong, return data requested
+			keyForFriendGroup = screenName + '_friends';
+			var commonFriendList {};
+			var friendsIndex = 0;
+			for (var key in friendFollowersList) {
+				if (friendFollowersList[key] = screenName ) {
+					// Found user's screenName in followers friends list.
+					// Friends in commong
+					commonFriendList[friendsIndex] = friendFollowersList[key];
+					friendsIndex += 1;
+				}
+			}
+			groupOfFriends[screenName] = commonFriendList;
+		}
 	})
-
+console.log(groupOfFriends);
 })
+
 
 // Sentiment analysis function
 // Sets the value for location's current mood
@@ -99,22 +117,22 @@ function currentMood (sentimentResult) {
 
 		// Determine positivity or negative from the text
 		// Fairly happy tweet
-		if (sentimentScore > 0 & sentimentScore < 3) 
+		if (sentimentScore > 0 & sentimentScore < 3)
 		{
 			overallSentiment += 1;
 		}
 		// Very Happy tweet
-		if (sentimentScore >= 3) 
+		if (sentimentScore >= 3)
 		{
 			overallSentiment += 2;
 		}
 		// Negative Tweet
-		if (sentimentScore < 0 & sentimentScore > -3) 
+		if (sentimentScore < 0 & sentimentScore > -3)
 		{
 			overallSentiment -= 1;
 		}
 		// Very negative tweet
-		if (sentimentScore <= -3) 
+		if (sentimentScore <= -3)
 		{
 			overallSentiment += 2;
 		}
@@ -123,10 +141,9 @@ function currentMood (sentimentResult) {
 		{
 			mood.current = "Positive";
 
-		} else 
+		} else
 		{
 			mood.current = "Negative";
 		}
 		return mood.current;
 	}
-
